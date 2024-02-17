@@ -19,7 +19,6 @@ class BoardGame(models.Model):
 
 class Inventory(models.Model):
     """Stan magazynowy konkretnego modelu gry planszowej."""
-
     inventory_id = models.AutoField(primary_key=True)  # Unikalny identyfikator dla każdego egzemplarza gry
 
     # Klucz obcy do modelu BoardGame, odnoszący się do konkretnej gry planszowej
@@ -40,13 +39,11 @@ class Address(models.Model):
 
 class CustomUser(AbstractUser):
     """Niestandardowy model użytkownika, zawierający dodatkowe informacje: numer telefonu i adres."""
-
     # Regex dla numeru telefonu; opcjonalny '+' i od 9 do 15 cyfr
     phone_regex = RegexValidator(
         regex=r'^\+?\d{9,15}$',
         message="Numer telefonu musi być w formacie: '+999999999'. Dozwolone do 15 cyfr."
     )
-
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)  # Numer telefonu, opcjonalny
 
     # Klucz obcy do modelu Address; ustawia NULL, gdy adres jest usunięty; opcjonalny
@@ -58,13 +55,12 @@ class CustomUser(AbstractUser):
 
 class Rental(models.Model):
     """Szczegóły wypożyczeń gier przez klientów."""
-
     rental_id = models.AutoField(primary_key=True)  # Unikalny identyfikator wypożyczenia
 
-    # Klucz obcy do tabeli użytkowników (klientów)
-    customer = models.ForeignKey(
+    # Klucz obcy do tabeli użytkowników
+    user = models.ForeignKey(
         'CustomUser', on_delete=models.CASCADE
-    )  # Usunięcie klienta powoduje usunięcie jego wypożyczeń
+    )  # Usunięcie użytkownika powoduje usunięcie jego wypożyczeń
 
     # Klucz obcy do tabeli Inventory, określający, który egzemplarz gry został wypożyczony
     inventory = models.ForeignKey(
@@ -72,6 +68,5 @@ class Rental(models.Model):
     )  # Usunięcie gry z magazynu powoduje usunięcie zapisu o jej wypożyczeniu
 
     rental_date = models.DateTimeField(default=timezone.now)  # Data wypożyczenia
-    planned_return_date = models.DateTimeField(verbose_name='Planned Return Date')  # Planowana data zwrotu
-    actual_return_date = models.DateTimeField(null=True, blank=True)  # Rzeczywista data zwrotu
+    return_date = models.DateTimeField(null=True, blank=True)  # Data zwrotu
     total_cost = models.DecimalField(max_digits=6, decimal_places=2)  # Całkowity koszt wypożyczenia
