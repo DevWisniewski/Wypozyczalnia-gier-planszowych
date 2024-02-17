@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'games_rental_app',
 ]
+AUTH_USER_MODEL = 'games_rental_app.CustomUser'  # zmiana modelu użytkownika na niestandardowy
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

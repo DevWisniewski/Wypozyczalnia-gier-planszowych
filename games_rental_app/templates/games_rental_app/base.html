@@ -12,13 +12,14 @@
         .top-bar {
             background-color: #111; /* Ciemny kolor paska */
             color: lightgray;
+            display: flex; /* Flexbox */
+            justify-content: center; /* Wyśrodkowanie horyzontalnie */
+            align-items: center; /* Wyśrodkowanie wertykalnie */
             padding: 10px 0;
-            text-align: center;
         }
         .top-bar div {
-            margin: 0 auto;
-            display: inline-block;
-            padding: 0 20px;
+            flex: 1; /* Każda kolumna zajmuje równą przestrzeń */
+            text-align: center; /* Wyśrodkowanie tekstu w kolumnie */
         }
         .navigation-bar {
             border: 1px solid black;
@@ -37,7 +38,7 @@
 </head>
 <body>
     <div class="top-bar">
-        <div><img src="{% static 'phone-icon.png' %}" alt="Telefon"> 732762475</div>
+        <div>632762475</div>
         <div>wypozyczalniagier@gmail.com</div>
         <div>ul. Świętego Mikołaja 7, 25-477 Gorzów Wielkopolski</div>
     </div>
@@ -49,7 +50,7 @@
 
     {% block content %} {% endblock %}
 
-    <!-- Tutaj można dodać dodatkową treść, która będzie wspólna dla wszystkich stron -->
+    <!-- Reszta strony bazowej -->
 
 </body>
 </html>
