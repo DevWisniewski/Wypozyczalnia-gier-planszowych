@@ -78,10 +78,15 @@ WSGI_APPLICATION = 'games_rental.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'games_rental',  # Nazwa bazy danych, którą właśnie utworzyłeś
+        'USER': 'postgres',      # Użytkownik PostgreSQL
+        'PASSWORD': '1234',      # Hasło użytkownika PostgreSQL
+        'HOST': 'localhost',     # Adres serwera bazy danych
+        'PORT': '5432',          # Port, na którym działa PostgreSQL
     }
 }
+
 
 
 # Password validation

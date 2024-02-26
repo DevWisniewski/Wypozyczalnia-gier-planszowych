@@ -3,18 +3,38 @@ from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from django.contrib.postgres.fields import ArrayField
 
 
 class BoardGame(models.Model):
     """Reprezentuje grę planszową z informacjami o grze."""
     name = models.CharField(max_length=50)  # Nazwa gry
     description = models.TextField()  # Opis gry
-    number_of_players = models.CharField(max_length=10)  # Liczba graczy
-    minimum_age = models.IntegerField(validators=[MinValueValidator(2)])  # Minimalny wiek graczy
-    maximum_age = models.IntegerField(validators=[MinValueValidator(120)])  # Maksymalny wiek graczy
-    duration = models.IntegerField(validators=[MinValueValidator(1)])  # Czas trwania gry w minutach
-    rental_price_per_day = models.DecimalField(max_digits=4, decimal_places=2)  # Cena wynajmu za 24h
-    deposit = models.DecimalField(max_digits=4, decimal_places=2)  # Wysokość kaucji za wypożyczenie gry
+
+    # Pole zawierające listę możliwych ilości graczy np. [2, 3, 4]
+    number_of_players = ArrayField(
+        models.IntegerField(validators=[MinValueValidator(1)]),
+        blank=True,  # możliwe puste pole w formularzu
+        null=True,  # możliwa wartość NULL w bazie danych
+    )
+
+    minimum_age = models.IntegerField(null=True, validators=[MinValueValidator(2)])  # Minimalny wiek graczy
+
+    # Minimalny czas trwania gry w minutach
+    min_duration = models.IntegerField(null=True, validators=[MinValueValidator(1)])
+
+    # Maksymalny czas trwania gry w minutach
+    max_duration = models.IntegerField(null=True, validators=[MinValueValidator(240)])
+    rental_price_per_day = models.DecimalField(max_digits=6, decimal_places=2)  # Cena wynajmu za 24h w PLN
+
+    # Pole zawierające listę kategorii np. ['ekonomiczna', 'rodzinna']
+    category = ArrayField(
+        models.CharField(max_length=20),
+        blank=True,  # możliwe puste pole w formularzu
+        null=True,  # możliwa wartość NULL w bazie danych
+    )
+
+    image_name = models.CharField(max_length=50, null=True, blank=True)  # Nazwa pliku ze zdjęciem gry
 
 
 class Inventory(models.Model):
