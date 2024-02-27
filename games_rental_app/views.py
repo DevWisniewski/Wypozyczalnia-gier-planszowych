@@ -46,3 +46,7 @@ class MyAccountView(LoginRequiredMixin, TemplateView):
         context = super(MyAccountView, self).get_context_data(**kwargs)
         context['user'] = self.request.user
         return context
+
+
+class StaticGameDetailsView(TemplateView):
+    template_name = 'games_rental_app/static_game_details.html'

@@ -1,0 +1,20 @@
+{% extends 'games_rental_app/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="game-details">
+    <h1>5 Sekund</h1>
+    <img src="{% static 'images/5_Sekund.jpg' %}" alt="Okładka gry 5 Sekund">
+
+    <p>Gracze ustawiają na środku pudełko z kartami i losują pytanie, na które odpowiada gracz siedzący na Gorącym Krześle. Kiedy usłyszy pytanie, wystartuje czasomierz odmierzający dokładnie 5 sekund przeznaczonych na udzielenie 3 poprawnych odpowiedzi. Zrób to jednocześnie: wymyśl odpowiedzi, kontroluj czas i postaraj się nie skupiać na rozpraszających kulkach przesuwających się po spirali czasomierza.</p>
+    <ul>
+        <li>Liczba graczy: {3,4,5,6}</li>
+        <li>Minimalny wiek: 8 lat</li>
+        <li>Czas trwania: 30-60 minut</li>
+        <li>Cena wynajmu: 7.60 PLN/dzień</li>
+        <li>Kategoria: {rodzinna,S,słowna,towarzyska}</li>
+    </ul>
+    <!-- Możesz dodać więcej informacji o grze zgodnie z potrzebami -->
+</div>
+{% endblock %}
