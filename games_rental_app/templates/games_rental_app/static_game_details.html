@@ -1,20 +1,27 @@
 {% extends 'games_rental_app/base.html' %}
 {% load static %}
 
-
 {% block content %}
-<div class="game-details">
-    <h1>5 Sekund</h1>
-    <img src="{% static 'images/5_Sekund.jpg' %}" alt="Okładka gry 5 Sekund">
-
-    <p>Gracze ustawiają na środku pudełko z kartami i losują pytanie, na które odpowiada gracz siedzący na Gorącym Krześle. Kiedy usłyszy pytanie, wystartuje czasomierz odmierzający dokładnie 5 sekund przeznaczonych na udzielenie 3 poprawnych odpowiedzi. Zrób to jednocześnie: wymyśl odpowiedzi, kontroluj czas i postaraj się nie skupiać na rozpraszających kulkach przesuwających się po spirali czasomierza.</p>
-    <ul>
-        <li>Liczba graczy: {3,4,5,6}</li>
-        <li>Minimalny wiek: 8 lat</li>
-        <li>Czas trwania: 30-60 minut</li>
-        <li>Cena wynajmu: 7.60 PLN/dzień</li>
-        <li>Kategoria: {rodzinna,S,słowna,towarzyska}</li>
-    </ul>
-    <!-- Możesz dodać więcej informacji o grze zgodnie z potrzebami -->
+<div class="game-container">
+    <div class="game-column game-image-info">
+        <img src="{% static 'images/5_Sekund.jpg' %}" alt="Okładka gry 5 Sekund">
+        <h4>Dodatkowe informacje:</h4>
+        <ul>
+            <li>Liczba graczy: {3,4,5,6}</li>
+            <li>Minimalny wiek: 8 lat</li>
+            <li>Czas trwania: 30-60 minut</li>
+            <li>Cena wynajmu: 7.60 PLN/dzień</li>
+            <li>Kategoria: {rodzinna,S,słowna,towarzyska}</li>
+        </ul>
+    </div>
+    <div class="game-column game-description">
+        <h1>5 Sekund</h1>
+        <p>Emocjonująca gra imprezowa! Celem gry jest odnajdywanie dziwnych gatunków zwierząt na odległej wyspie. Wszyscy gracze starają się odnaleźć odpowiednie zwierzę w tym samym momencie! Gwarantuje to niezwykle szybkie tempo gry i wielkie emocje. Wygra osoba, która wykaże się najlepszą spostrzegawczością i szybkością podejmowania decyzji. Dołącz do zabawy! Znajdź kroko-lwa i żyrafo-małpę!
+</p>
+    </div>
+    <div class="game-column game-order">
+        <h2>Zawartość koszyka</h2>
+    </div>
 </div>
+
 {% endblock %}

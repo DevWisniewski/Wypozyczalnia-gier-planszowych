@@ -1,0 +1,61 @@
+.game-container {
+    /* Kontener główny, wyśrodkowuje i ogranicza szerokość zawartości */
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.game-column {
+    /* Podstawowe stylowanie dla każdej kolumny */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.game-image-info {
+    /* Styl dla kolumny z obrazkiem i dodatkowymi informacjami */
+    flex: 0.4;
+}
+
+.game-image-info img {
+    /* Stylowanie obrazka */
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.game-image-info h4 {
+    /* Styl dla nagłówka "Dodatkowe informacje" */
+    margin-top: 30px;
+    font-weight: bold;
+}
+
+.game-image-info ul {
+    /* Styl dla listy dodatkowych informacji */
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 16px;
+}
+
+.game-image-info li {
+    /* Stylowanie dla poszczególnych elementów listy */
+    margin-bottom: 5px;
+}
+
+.game-description {
+    /* Styl dla kolumny z opisem gry (rozmiar) */
+    flex: 0.6;
+}
+
+.game-order {
+    /* Styl dla kolumny z zamówieniem (padding) */
+    padding: 10px;
+}
+
+.game-description h1 {
+    /* Styl dla nazwy gry */
+    font-size: 40px;
+    margin-bottom: 10px;
+}
