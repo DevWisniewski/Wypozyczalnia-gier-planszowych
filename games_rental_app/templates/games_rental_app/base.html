@@ -44,9 +44,9 @@
         <div>ul. Świętego Mikołaja 7, 25-477 Gorzów Wielkopolski</div>
     </div>
     <div class="navigation-bar">
-        <a href="#">Witaj!</a>
-        <a href="#">Wypożycz grę</a>
-        <a href="#">Kontakt</a>
+        <a href="{% url 'welcome' %}">Witaj!</a>
+        <a href="{% url 'game_list' %}">Wypożycz grę</a>
+        <a href="{% url 'contact' %}">Kontakt</a>
     </div>
 
     {% block content %} {% endblock %}

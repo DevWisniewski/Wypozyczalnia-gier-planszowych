@@ -1,0 +1,26 @@
+{% extends 'games_rental_app/base.html' %}
+
+{% block content %}
+<div style="padding: 20px;">
+    <h1>Kontakt</h1>
+    <p>Jeśli masz jakiekolwiek pytania lub sugestie, skontaktuj się z nami!</p>
+    <div>
+        <h2>Dane kontaktowe:</h2>
+        <p>Telefon: 632762475</p>
+        <p>Email: wypozyczalniagier@gmail.com</p>
+        <p>Adres: ul. Świętego Mikołaja 7, 25-477 Gorzów Wielkopolski</p>
+    </div>
+    <div>
+        <h2>Formularz kontaktowy:</h2>
+        <form action="#" method="post">
+            <label for="name">Imię:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="email">Email:</label><br>
+            <input type="text" id="email" name="email"><br>
+            <label for="message">Wiadomość:</label><br>
+            <textarea id="message" name="message" rows="4" cols="50"></textarea><br>
+            <input type="submit" value="Wyślij">
+        </form>
+    </div>
+</div>
+{% endblock %}

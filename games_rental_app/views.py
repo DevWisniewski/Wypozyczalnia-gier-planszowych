@@ -11,6 +11,8 @@ from django.views.generic import TemplateView
 from .forms import (LoginForm, AddUserForm,)
 from django.views.generic.detail import DetailView
 from .models import BoardGame
+from django.views.generic import ListView
+from .models import BoardGame
 
 User = get_user_model()
 
@@ -59,4 +61,18 @@ class GameDetailsView(DetailView):
     context_object_name = 'game'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
+
+
+class GameListView(ListView):
+    model = BoardGame
+    template_name = 'games_rental_app/game_list.html'
+    context_object_name = 'games'
+
+
+class ContactView(TemplateView):
+    template_name = 'games_rental_app/contact.html'
+
+
+class WelcomeView(TemplateView):
+    template_name = 'games_rental_app/welcome.html'
 

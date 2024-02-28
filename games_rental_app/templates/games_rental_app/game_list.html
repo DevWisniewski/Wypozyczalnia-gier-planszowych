@@ -1,0 +1,16 @@
+{% extends 'games_rental_app/base.html' %}
+
+{% block content %}
+    <div style="padding: 20px;">
+        <h1>Gry Planszowe</h1>
+        <ul>
+            {% for game in games %}
+                <li>
+                    <a href="{% url 'game-detail' slug=game.slug %}">{{ game.name }}</a>
+                </li>
+            {% empty %}
+                <li>Brak gier w bazie danych.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
