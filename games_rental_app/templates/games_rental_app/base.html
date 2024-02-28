@@ -35,6 +35,10 @@
             text-decoration: none;
             font-size: 20px;
         }
+        .account-buttons {
+            text-align: right;
+            padding-right: 20px;
+        }
     </style>
 </head>
 <body>
@@ -47,6 +51,10 @@
         <a href="{% url 'welcome' %}">Witaj!</a>
         <a href="{% url 'game_list' %}">Wypożycz grę</a>
         <a href="{% url 'contact' %}">Kontakt</a>
+    </div>
+    <div class="account-buttons">
+        <a href="{% url 'add_user' %}">Utwórz konto</a>
+        <a href="{% url 'login' %}">Zaloguj</a>
     </div>
 
     {% block content %} {% endblock %}
