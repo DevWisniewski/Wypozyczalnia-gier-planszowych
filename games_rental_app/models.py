@@ -5,7 +5,8 @@ from django.core.validators import RegexValidator
 from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class BoardGame(models.Model):
@@ -37,7 +38,13 @@ class BoardGame(models.Model):
     )
 
     image_name = models.CharField(max_length=50, null=True, blank=True)  # Nazwa pliku ze zdjęciem gry
-    temp_slug = models.CharField(max_length=50, default='default_value')
+    slug = models.CharField(max_length=50)  # Pole przechowuje adres URL oparty na nazwie gry
+
+
+@receiver(pre_save, sender=BoardGame)
+def create_boardgame_slug(instance):
+    """Funkcja generująca pole slug na podstawie nazwy gry, wywoływana przed zapisaniem obiektu BoardGame."""
+    instance.slug = slugify(instance.name)
 
 
 class Inventory(models.Model):
