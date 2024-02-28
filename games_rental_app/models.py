@@ -37,19 +37,7 @@ class BoardGame(models.Model):
     )
 
     image_name = models.CharField(max_length=50, null=True, blank=True)  # Nazwa pliku ze zdjęciem gry
-    slug = models.SlugField()
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            new_slug = base_slug
-            counter = 1
-            while BoardGame.objects.filter(slug=new_slug).exists():
-                new_slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = new_slug
-
-        super(BoardGame, self).save(*args, **kwargs)
+    temp_slug = models.CharField(max_length=50, default='default_value')
 
 
 class Inventory(models.Model):
