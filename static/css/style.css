@@ -27,9 +27,10 @@
 }
 
 .game-image-info h4 {
-    /* Styl dla nagłówka "Dodatkowe informacje" */
-    margin-top: 30px;
+    margin-top: 10px; /* Zmniejszenie odstępu górnego */
+    margin-bottom: 20px; /* Zachowanie odstępu dolnego */
     font-weight: bold;
+
 }
 
 .game-image-info ul {
@@ -37,6 +38,7 @@
     list-style-type: none;
     padding-left: 0;
     font-size: 16px;
+
 }
 
 .game-image-info li {

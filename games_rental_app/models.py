@@ -42,7 +42,7 @@ class BoardGame(models.Model):
 
 
 @receiver(pre_save, sender=BoardGame)
-def create_boardgame_slug(instance):
+def create_boardgame_slug(instance, **kwargs):
     """Funkcja generująca pole slug na podstawie nazwy gry, wywoływana przed zapisaniem obiektu BoardGame."""
     instance.slug = slugify(instance.name)
 

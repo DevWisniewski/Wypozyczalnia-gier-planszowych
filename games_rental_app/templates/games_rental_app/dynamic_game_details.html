@@ -1,0 +1,27 @@
+{% extends 'games_rental_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="game-container">
+    <div class="game-column game-image-info">
+        <img src="{% static 'images/'|add:game.image_name %}" alt="{{ game.name }}">
+        <h4>Dodatkowe informacje:</h4>
+        <ul>
+            <li>Liczba graczy: {{ game.number_of_players|join:", " }}</li>
+            <li>Wiek: {{ game.minimum_age }}+</li>
+            <li>Czas trwania: {{ game.min_duration }} minut</li>
+            <li>Cena wynajmu: {{ game.rental_price_per_day }} PLN/dzień</li>
+            <li>Kategoria: {{ game.category|join:", " }}</li>
+        </ul>
+    </div>
+    <div class="game-column game-description">q`
+        <h1>{{ game.name }}</h1>
+        <p>{{ game.description }}</p>
+
+    </div>
+    <div class="game-column game-order">
+        <h2>Zawartość koszyka</h2>
+    </div>
+</div>
+
+{% endblock %}
