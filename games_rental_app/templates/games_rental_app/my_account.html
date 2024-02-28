@@ -1,13 +1,13 @@
 {% extends 'games_rental_app/base.html' %}
 
 {% block content %}
-<h1>Profil Użytkownika</h1>
-<p>Imię: {{ user.first_name }}</p>
-<p>Nazwisko: {{ user.last_name }}</p>
-<p>Email: {{ user.email }}</p>
+    <h1>Profil Użytkownika</h1>
+    <p>Imię: {{ user.first_name }}</p>
+    <p>Nazwisko: {{ user.last_name }}</p>
+    <p>Email: {{ user.email }}</p>
 
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Wyloguj">
-</form>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Wyloguj">
+    </form>
 {% endblock %}

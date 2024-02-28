@@ -52,14 +52,15 @@
         <a href="{% url 'game_list' %}">Wypożycz grę</a>
         <a href="{% url 'contact' %}">Kontakt</a>
     </div>
-    <div class="account-buttons">
-        <a href="{% url 'add_user' %}">Utwórz konto</a>
-        <a href="{% url 'login' %}">Zaloguj</a>
-    </div>
+    {% if not user.is_authenticated %}
+        <div class="account-buttons">
+            <a href="{% url 'add_user' %}">Utwórz konto</a>
+            <a href="{% url 'login' %}">Zaloguj</a>
+        </div>
+    {% endif %}
 
     {% block content %} {% endblock %}
 
     <!-- Reszta strony bazowej -->
-
 </body>
 </html>
