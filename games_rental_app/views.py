@@ -8,8 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-
 from .forms import (LoginForm, AddUserForm,)
+from django.views.generic.detail import DetailView
+from .models import BoardGame
 
 User = get_user_model()
 
@@ -50,3 +51,12 @@ class MyAccountView(LoginRequiredMixin, TemplateView):
 
 class StaticGameDetailsView(TemplateView):
     template_name = 'games_rental_app/static_game_details.html'
+
+
+class GameDetailsView(DetailView):
+    model = BoardGame
+    template_name = 'games_rental_app/dynamic_game_details.html'
+    context_object_name = 'game'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
