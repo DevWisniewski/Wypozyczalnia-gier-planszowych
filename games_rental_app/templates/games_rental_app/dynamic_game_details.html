@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="game-container">
+    <!-- Sekcja z obrazkiem gry i dodatkowymi informacjami -->
     <div class="game-column game-image-info">
         <img src="{% static 'images/'|add:game.image_name %}" alt="{{ game.name }}">
         <h4>Dodatkowe informacje:</h4>
@@ -14,13 +15,26 @@
             <li>Kategoria: {{ game.category|join:", " }}</li>
         </ul>
     </div>
+
+    <!-- Sekcja z opisem gry -->
     <div class="game-column game-description">
         <h1>{{ game.name }}</h1>
         <p>{{ game.description }}</p>
 
+        <!-- Informacje o dostępności gry oraz przycisk wypożyczenia -->
+        {% if is_available %}
+            <p style="color: green;">Na stanie</p>
+            <!-- Przycisk do wypożyczenia gry -->
+            <button type="button" class="button-style2">Wypożycz Grę!</button>
+        {% else %}
+            <p style="color: red;">Brak w magazynie</p>
+        {% endif %}
     </div>
+
+    <!-- Dodatkowa sekcja na zawartość koszyka -->
     <div class="game-column game-order">
         <h2>Zawartość koszyka</h2>
+        <!-- Treść koszyka -->
     </div>
 </div>
 

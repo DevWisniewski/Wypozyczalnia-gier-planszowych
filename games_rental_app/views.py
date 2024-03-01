@@ -6,7 +6,7 @@ from django.views.generic import CreateView, FormView, ListView, RedirectView, T
 from django.views.generic.detail import DetailView
 
 from .forms import LoginForm, AddUserForm, GameFilterForm
-from .models import BoardGame, Address
+from .models import BoardGame, Address, Inventory
 
 User = get_user_model()
 
@@ -136,6 +136,12 @@ class GameDetailsView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+    def get_context_data(self, **kwargs):
+        context = super(GameDetailsView, self).get_context_data(**kwargs)
+        game = context['game']
+        inventory_items = Inventory.objects.filter(game=game, is_rented=False)
+        context['is_available'] = inventory_items.exists()
+        return context
 
 class ContactView(TemplateView):
     """
