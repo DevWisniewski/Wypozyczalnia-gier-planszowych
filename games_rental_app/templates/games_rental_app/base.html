@@ -42,16 +42,19 @@
     </style>
 </head>
 <body>
+    <!-- Górny pasek z podstawowymi informacjami -->
     <div class="top-bar">
         <div>632762475</div>
         <div>wypozyczalniagier@gmail.com</div>
         <div>ul. Świętego Mikołaja 7, 25-477 Gorzów Wielkopolski</div>
     </div>
+    <!-- Pasek nawigacyjny -->
     <div class="navigation-bar">
         <a href="{% url 'welcome' %}">Witaj!</a>
         <a href="{% url 'game_list' %}">Wypożycz grę</a>
         <a href="{% url 'contact' %}">Kontakt</a>
     </div>
+    <!-- Sprawdzenie, czy użytkownik jest zalogowany -->
     {% if not user.is_authenticated %}
         <div class="account-buttons">
             <a href="{% url 'add_user' %}">Utwórz konto</a>
@@ -61,6 +64,5 @@
 
     {% block content %} {% endblock %}
 
-    <!-- Reszta strony bazowej -->
 </body>
 </html>

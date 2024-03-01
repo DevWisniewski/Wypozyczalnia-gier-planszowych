@@ -3,6 +3,17 @@
 {% block content %}
     <div style="padding: 20px;">
         <h1>Gry Planszowe</h1>
+        <!-- Filtry metodą get -->
+        <form method="get">
+            <div>{{ form.number_of_players.label_tag }} {{ form.number_of_players }}</div>
+            <div>{{ form.min_age.label_tag }} {{ form.min_age }}</div>
+            <div>{{ form.min_duration.label_tag }} {{ form.min_duration }}</div>
+            <div>{{ form.max_duration.label_tag }} {{ form.max_duration }}</div>
+            <div>{{ form.min_price.label_tag }} {{ form.min_price }}</div>
+            <div>{{ form.max_price.label_tag }} {{ form.max_price }}</div>
+            <input type="submit" value="Szukaj">
+        </form>
+        <!-- Lista gier -->
         <ul>
             {% for game in games %}
                 <li>
