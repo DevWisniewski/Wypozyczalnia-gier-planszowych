@@ -48,14 +48,15 @@ def create_boardgame_slug(instance, **kwargs):
 
 
 class Inventory(models.Model):
-    """Stan magazynowy konkretnego modelu gry planszowej."""
-    inventory_id = models.AutoField(primary_key=True)  # Unikalny identyfikator dla każdego egzemplarza gry
+    """Reprezentuje indywidualny egzemplarz gry planszowej w magazynie."""
+    # Unikalny identyfikator dla każdego egzemplarza gry
+    inventory_id = models.AutoField(primary_key=True)
 
     # Klucz obcy do modelu BoardGame, odnoszący się do konkretnej gry planszowej
     game = models.ForeignKey(BoardGame, on_delete=models.CASCADE)
 
-    # Ilość dostępnych egzemplarzy danej gry planszowej
-    quantity = models.IntegerField(validators=[MinValueValidator(0)])
+    # Flaga wskazująca, czy egzemplarz jest obecnie wypożyczony
+    is_rented = models.BooleanField(default=False)
 
 
 class Address(models.Model):
