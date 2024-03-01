@@ -1,42 +1,69 @@
 {% extends 'games_rental_app/base.html' %}
 
 {% block content %}
-<h1>Profil Użytkownika: {{ user.username }}</h1>
-<p>Imię: {{ user.first_name }}</p>
-<p>Nazwisko: {{ user.last_name }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Telefon: {{ user.phone_number }}</p>
+    <div class="account">
+        <h2>Profil Użytkownika: {{ user.username }}</h2>
+        <p>Imię: {{ user.first_name }}</p>
+        <p>Nazwisko: {{ user.last_name }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Telefon: {{ user.phone_number }}</p>
 
-<!-- Formularz edycji danych użytkownika -->
-<form action="{% url 'update_user' %}" method="post">
-    {% csrf_token %}
-    <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="Imię">
-    <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Nazwisko">
-    <input type="text" name="phone_number" value="{{ user.phone_number }}" placeholder="Telefon">
-    <button type="submit">Aktualizuj dane</button>
-</form>
+        <!-- Stylowanie formularza -->
+        <style>
+            input, label {
+                display: block;
+                margin-bottom: 5px;
+            }
+        </style>
 
-<!-- Formularz adresu -->
-{% if user.address %}
-    <h2>Twój adres</h2>
-    <p>{{ user.address.street }} {{ user.address.house_number }}</p>
-    <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
-    <p>{{ user.address.country }}</p>
-{% else %}
-    <h2>Adres nie został jeszcze dodany</h2>
-{% endif %}
-<form action="{% url 'update_address' %}" method="post">
-    {% csrf_token %}
-    <input type="text" name="street" placeholder="Ulica">
-    <input type="text" name="house_number" placeholder="Numer domu/mieszkania">
-    <input type="text" name="postal_code" placeholder="Kod pocztowy">
-    <input type="text" name="city" placeholder="Miasto">
-    <input type="text" name="country" placeholder="Kraj">
-    <button type="submit">Aktualizuj adres</button>
-</form>
+        <!-- Formularz edycji danych użytkownika -->
+        <form action="{% url 'my_account' %}" method="post">
+            {% csrf_token %}
+            <label for="first_name">Imię:</label>
+            <input type="text" id="first_name" name="first_name">
 
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Wyloguj">
-</form>
+            <label for="last_name">Nazwisko:</label>
+            <input type="text" id="last_name" name="last_name">
+
+            <label for="phone_number">Telefon:</label>
+            <input type="text" id="phone_number" name="phone_number">
+
+            <input type="submit" value="Aktualizuj dane">
+        </form>
+
+        <!-- Formularz adresu -->
+        {% if user.address %}
+            <h3>Twój adres</h3>
+            <p>{{ user.address.street }} {{ user.address.house_number }}</p>
+            <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
+            <p>{{ user.address.country }}</p>
+        {% else %}
+            <h3>Adres nie został jeszcze dodany</h3>
+        {% endif %}
+        <form action="{% url 'my_account' %}" method="post">
+            {% csrf_token %}
+            <label for="street">Ulica:</label>
+            <input type="text" id="street" name="street">
+
+            <label for="house_number">Numer domu/mieszkania:</label>
+            <input type="text" id="house_number" name="house_number">
+
+            <label for="postal_code">Kod pocztowy:</label>
+            <input type="text" id="postal_code" name="postal_code">
+
+            <label for="city">Miasto:</label>
+            <input type="text" id="city" name="city">
+
+            <label for="country">Kraj:</label>
+            <input type="text" id="country" name="country">
+
+            <input type="submit" value="Aktualizuj adres">
+        </form>
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Wyloguj">
+        </form>
+    </div>
+
 {% endblock %}

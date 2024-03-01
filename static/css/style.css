@@ -61,3 +61,24 @@
     font-size: 40px;
     margin-bottom: 10px;
 }
+.account {
+    /* Podstawowe stylowanie dla każdej kolumny */
+    padding: 5px;
+    box-sizing: border-box;
+}
+.button-style {
+    /* Styl dla przycisków logowania */
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.account-buttons {
+    display: flex;
+    justify-content: flex-end; /* Wyrównanie do prawej */
+    align-items: center; /* Wyśrodkowanie wertykalne */
+    padding-right: 20px; /* Odstęp od prawej krawędzi */
+}

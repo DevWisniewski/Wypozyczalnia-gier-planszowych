@@ -53,28 +53,26 @@
         <a href="{% url 'welcome' %}">Witaj!</a>
         <a href="{% url 'game_list' %}">Wypożycz grę</a>
         <a href="{% url 'contact' %}">Kontakt</a>
+        </div>
+
+    <!-- Jeśli użytkownik jest zalogowany -->
+    <div class="account-buttons">
+    <form action="#" method="get" style="display: flex;">
+        <!-- Jeśli użytkownik jest zalogowany -->
+        {% if user.is_authenticated %}
+            <button formaction="{% url 'my_account' %}" type="submit" class="button-style">Moje konto</button>
+            {% csrf_token %}
+            <button formaction="{% url 'logout' %}" type="submit" class="button-style">Wyloguj</button>
+        <!-- Jeśli użytkownik nie jest zalogowany -->
+        {% else %}
+            <button formaction="{% url 'add_user' %}" type="submit" class="button-style">Utwórz konto</button>
+            <button formaction="{% url 'login' %}" type="submit" class="button-style">Zaloguj</button>
+        {% endif %}
+    </form>
     </div>
-<<<<<<< Updated upstream
-    <!-- Sprawdzenie, czy użytkownik jest zalogowany -->
-    {% if not user.is_authenticated %}
-=======
-    {% if user.is_authenticated %}
-        <div class="account-buttons">
-            <a href="{% url 'my_account' %}">Moje konto</a>
-            <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <input type="submit" value="Wyloguj" style="background: none; border: none; color: black; cursor: pointer; padding: 0; font-size: 20px;">
-            </form>
-        </div>
-    {% else %}
->>>>>>> Stashed changes
-        <div class="account-buttons">
-            <a href="{% url 'add_user' %}">Utwórz konto</a>
-            <a href="{% url 'login' %}">Zaloguj</a>
-        </div>
-    {% endif %}
+
 
     {% block content %} {% endblock %}
-
+    <!-- Reszta strony bazowej -->
 </body>
 </html>
