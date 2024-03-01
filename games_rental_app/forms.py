@@ -1,8 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
+from .models import CustomUser, Address
 
 User = get_user_model()
+
 
 class LoginForm(forms.Form):
     """
@@ -81,3 +83,13 @@ class GameFilterForm(forms.Form):
     min_price = forms.ChoiceField(choices=PRICE_CHOICES, label='Cena za wypożyczenie od (za dobę)', required=False)
     max_price = forms.ChoiceField(choices=PRICE_CHOICES, label='do (za dobę)', required=False)
 
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'phone_number']
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ['street', 'house_number', 'postal_code', 'city', 'country']

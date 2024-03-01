@@ -79,7 +79,7 @@ class CustomUser(AbstractUser):
     # Klucz obcy do modelu Address; ustawia NULL, gdy adres jest usunięty; opcjonalny
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Pole email jest wymaganego, unikalne
+    # Pole email jest wymagane, unikalne
     email = models.EmailField(unique=True, blank=False, null=False)
 
 

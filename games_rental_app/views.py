@@ -1,11 +1,14 @@
 from django.views.generic import CreateView, FormView, ListView, RedirectView
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import get_user_model, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from .forms import LoginForm, AddUserForm, GameFilterForm
 from django.views.generic.detail import DetailView
 from .models import BoardGame
+from django.shortcuts import render, redirect
+from django.views import View
+from .forms import UserEditForm, AddressForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 User = get_user_model()
 
@@ -131,3 +134,39 @@ class GameListView(ListView):
 
         return context
 
+
+# Klasa widoku do edycji danych użytkownika
+class UserEditView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = UserEditForm(instance=request.user)
+        return render(request, 'games_rental_app/user_edit.html', {'form': form})
+
+    def post(self, request):
+        form = UserEditForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('my_account')
+        return render(request, 'games_rental_app/user_edit.html', {'form': form})
+
+# Klasa widoku do edycji adresu
+class AddressEditView(LoginRequiredMixin, View):
+    def get(self, request):
+        try:
+            address = request.user.address
+        except Address.DoesNotExist:
+            address = None
+        form = AddressForm(instance=address)
+        return render(request, 'games_rental_app/address_edit.html', {'form': form})
+
+    def post(self, request):
+        try:
+            address = request.user.address
+        except Address.DoesNotExist:
+            address = None
+        form = AddressForm(request.POST, instance=address)
+        if form.is_valid():
+            new_address = form.save(commit=False)
+            new_address.user = request.user
+            new_address.save()
+            return redirect('my_account')
+        return render(request, 'games_rental_app/address_edit.html', {'form': form})

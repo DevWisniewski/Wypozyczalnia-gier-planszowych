@@ -1,13 +1,42 @@
 {% extends 'games_rental_app/base.html' %}
 
 {% block content %}
-    <h1>Profil Użytkownika</h1>
-    <p>Imię: {{ user.first_name }}</p>
-    <p>Nazwisko: {{ user.last_name }}</p>
-    <p>Email: {{ user.email }}</p>
+<h1>Profil Użytkownika: {{ user.username }}</h1>
+<p>Imię: {{ user.first_name }}</p>
+<p>Nazwisko: {{ user.last_name }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Telefon: {{ user.phone_number }}</p>
 
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Wyloguj">
-    </form>
+<!-- Formularz edycji danych użytkownika -->
+<form action="{% url 'update_user' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="Imię">
+    <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Nazwisko">
+    <input type="text" name="phone_number" value="{{ user.phone_number }}" placeholder="Telefon">
+    <button type="submit">Aktualizuj dane</button>
+</form>
+
+<!-- Formularz adresu -->
+{% if user.address %}
+    <h2>Twój adres</h2>
+    <p>{{ user.address.street }} {{ user.address.house_number }}</p>
+    <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
+    <p>{{ user.address.country }}</p>
+{% else %}
+    <h2>Adres nie został jeszcze dodany</h2>
+{% endif %}
+<form action="{% url 'update_address' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="street" placeholder="Ulica">
+    <input type="text" name="house_number" placeholder="Numer domu/mieszkania">
+    <input type="text" name="postal_code" placeholder="Kod pocztowy">
+    <input type="text" name="city" placeholder="Miasto">
+    <input type="text" name="country" placeholder="Kraj">
+    <button type="submit">Aktualizuj adres</button>
+</form>
+
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Wyloguj">
+</form>
 {% endblock %}
