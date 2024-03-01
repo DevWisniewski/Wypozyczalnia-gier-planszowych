@@ -1,37 +1,53 @@
-from django.views.generic import CreateView, FormView, ListView, RedirectView
-from django.urls import reverse, reverse_lazy
 from django.contrib.auth import get_user_model, login, logout
-from django.views.generic import TemplateView
-from .forms import LoginForm, AddUserForm, GameFilterForm
-from django.views.generic.detail import DetailView
-from .models import BoardGame
-from django.shortcuts import render, redirect
-from django.views import View
-from .forms import UserEditForm, AddressForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.views.generic import CreateView, FormView, ListView, RedirectView, TemplateView
+from django.views.generic.detail import DetailView
+
+from .forms import LoginForm, AddUserForm, GameFilterForm
+from .models import BoardGame, Address
 
 User = get_user_model()
 
+
 class LoginView(FormView):
+    """
+    Obsługuje wyświetlanie formularza logowania oraz proces logowania.
+    """
     template_name = "games_rental_app/login.html"
     form_class = LoginForm
     success_url = reverse_lazy("my_account")
 
     def form_valid(self, form):
+        """
+        Loguje użytkownika, jeśli formularz jest poprawnie wypełniony.
+        """
         user = form.user
         login(self.request, user)
         return super().form_valid(form)
 
 
 class LogoutView(RedirectView):
+    """
+    Widok wylogowania użytkownika.
+    Obsługuje proces wylogowania użytkownika i przekierowuje go na stronę logowania.
+    """
     url = reverse_lazy("login")
 
     def get(self, request, *args, **kwargs):
+        """
+        Wylogowuje użytkownika po wejściu na ten widok.
+        """
         logout(request)
         return super().get(request, *args, **kwargs)
 
 
 class AddUserView(CreateView):
+    """
+    Widok tworzenia nowego użytkownika.
+    Obsługuje wyświetlanie formularza rejestracji i tworzenie nowego konta użytkownika.
+    """
     template_name = "games_rental_app/add_user.html"
     model = User
     form_class = AddUserForm
@@ -39,12 +55,67 @@ class AddUserView(CreateView):
 
 
 class MyAccountView(LoginRequiredMixin, TemplateView):
+    """
+    Widok strony 'Moje konto' dostępny tylko dla zalogowanych użytkowników.
+    Umożliwia wyświetlanie i edycję danych osobowych oraz adresu użytkownika.
+
+    Dziedziczy po:
+    - LoginRequiredMixin: - powoduje, że tylko zalogowani użytkownicy mają dostęp do tego widoku.
+    - TemplateView: - umożliwia korzystanie z generycznego widoku opartego na szablonie.
+    """
+
     template_name = 'games_rental_app/my_account.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Zwraca kontekst danych dla szablonu, dodaje obiekt zalogowanego użytkownika do kontekstu.
+        """
         context = super(MyAccountView, self).get_context_data(**kwargs)
         context['user'] = self.request.user
         return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Obsługuje żądania POST z formularza. Umożliwia aktualizację danych osobowych oraz adresu użytkownika.
+        """
+        user = request.user  # Pobranie aktualnie zalogowanego użytkownika
+        user = request.user  # do zmiennej user przypisujemy aktualnie zalogowanego użytkownika
+
+        # Pobieranie z formularza danych osobowych wprowadzonych przez zalogowanego użytkownika
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.phone_number = request.POST.get('phone_number', user.phone_number)
+        # Zapisanie nowych danych użytkownika
+        user.save()
+
+        # Pobieranie z formularza adresu wprowadzonego przez zalogowanego użytkownika
+        street = request.POST.get('street')
+        house_number = request.POST.get('house_number')
+        postal_code = request.POST.get('postal_code')
+        city = request.POST.get('city')
+        country = request.POST.get('country')
+
+        # Sprawdzenie, czy użytkownik podał wszystkie dane w formularzu
+        if street and house_number and postal_code and city and country:
+
+            if user.address:            # Sprawdzenie, czy użytkownik ma już przypisany adres,
+                address = user.address  # Jeśli tak, używany do modyfikacji istniejący obiekt adresu
+            else:
+                address = Address()     # Jeśli nie, tworzony jest nowy obiekt adresu
+
+            # Aktualizacja lub ustawienie nowych danych adresowych
+            address.street = street
+            address.house_number = house_number
+            address.postal_code = postal_code
+            address.city = city
+            address.country = country
+            address.save()
+
+            # Przypisanie nowego obiektu adresu do profilu użytkownika
+            user.address = address
+            user.save()
+
+        return redirect('my_account')
 
 
 class StaticGameDetailsView(TemplateView):
@@ -52,6 +123,7 @@ class StaticGameDetailsView(TemplateView):
     Widok testowy; pokazuje statyczne informacje o grze.
     """
     template_name = 'games_rental_app/static_game_details.html'
+
 
 class GameDetailsView(DetailView):
     """
@@ -64,17 +136,20 @@ class GameDetailsView(DetailView):
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
 
+
 class ContactView(TemplateView):
     """
     Widok strony kontaktowej. Wyświetla informacje kontaktowe i formularz do kontaktu.
     """
     template_name = 'games_rental_app/contact.html'
 
+
 class WelcomeView(TemplateView):
     """
     Widok strony powitalnej. Pokazuje informacje ogólne o serwisie.
     """
     template_name = 'games_rental_app/welcome.html'
+
 
 class GameListView(ListView):
     """
@@ -86,8 +161,7 @@ class GameListView(ListView):
 
     def get_queryset(self):
         """
-        Pobiera listę gier dostępnych w serwisie, uwzględniając wybory
-        użytkownika w formularzu filtrowania.
+        Pobiera listę gier dostępnych w serwisie, uwzględniając wybory użytkownika w formularzu filtrowania.
         """
         # Pobiera domyślną listę wszystkich gier
         queryset = super().get_queryset()
@@ -133,40 +207,3 @@ class GameListView(ListView):
         context['form'] = GameFilterForm(self.request.GET or None)
 
         return context
-
-
-# Klasa widoku do edycji danych użytkownika
-class UserEditView(LoginRequiredMixin, View):
-    def get(self, request):
-        form = UserEditForm(instance=request.user)
-        return render(request, 'games_rental_app/user_edit.html', {'form': form})
-
-    def post(self, request):
-        form = UserEditForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('my_account')
-        return render(request, 'games_rental_app/user_edit.html', {'form': form})
-
-# Klasa widoku do edycji adresu
-class AddressEditView(LoginRequiredMixin, View):
-    def get(self, request):
-        try:
-            address = request.user.address
-        except Address.DoesNotExist:
-            address = None
-        form = AddressForm(instance=address)
-        return render(request, 'games_rental_app/address_edit.html', {'form': form})
-
-    def post(self, request):
-        try:
-            address = request.user.address
-        except Address.DoesNotExist:
-            address = None
-        form = AddressForm(request.POST, instance=address)
-        if form.is_valid():
-            new_address = form.save(commit=False)
-            new_address.user = request.user
-            new_address.save()
-            return redirect('my_account')
-        return render(request, 'games_rental_app/address_edit.html', {'form': form})
