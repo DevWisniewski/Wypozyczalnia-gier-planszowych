@@ -1,12 +1,17 @@
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import CreateView, FormView, ListView, RedirectView, TemplateView
 from django.views.generic.detail import DetailView
+from django.utils import timezone
+from django.contrib import messages
 
 from .forms import LoginForm, AddUserForm, GameFilterForm
-from .models import BoardGame, Address, Inventory
+from .models import BoardGame, Address, Inventory, Rental
+
+
+
 
 User = get_user_model()
 
@@ -142,6 +147,36 @@ class GameDetailsView(DetailView):
         inventory_items = Inventory.objects.filter(game=game, is_rented=False)
         context['is_available'] = inventory_items.exists()
         return context
+
+    def post(self, request, *args, **kwargs):
+        # Twoja dotychczasowa logika
+        self.object = self.get_object()
+
+        # Sprawdzenie, czy przycisk "Wypożycz Grę!" został naciśnięty
+        if 'rent_game' in request.POST:
+            game = self.object
+            available_inventory = Inventory.objects.filter(game=game, is_rented=False).first()
+
+            if available_inventory:
+                Rental.objects.create(
+                    user=request.user,
+                    inventory=available_inventory,
+                    rental_date=timezone.now(),
+                    total_cost=game.rental_price_per_day  # przykładowa kalkulacja kosztu
+                )
+                available_inventory.is_rented = True
+                available_inventory.save()
+                messages.success(request, 'Gra została pomyślnie wypożyczona.')
+            else:
+                messages.error(request, 'Niestety, gra nie jest dostępna.')
+
+            return redirect('game_detail', slug=game.slug)
+
+        # Kontynuuj normalne przetwarzanie, jeśli przycisk "Wypożycz Grę!" nie został naciśnięty
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+
 
 class ContactView(TemplateView):
     """

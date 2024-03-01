@@ -16,25 +16,34 @@
         </ul>
     </div>
 
-    <!-- Sekcja z opisem gry -->
+        <!-- Sekcja z opisem gry -->
     <div class="game-column game-description">
         <h1>{{ game.name }}</h1>
         <p>{{ game.description }}</p>
 
-        <!-- Informacje o dostępności gry oraz przycisk wypożyczenia -->
+        <!-- Informacje o dostępności gry oraz przycisk wypożyczenia (tylko dla zalogowanych użytkowników) -->
         {% if is_available %}
             <p style="color: green;">Na stanie</p>
-            <!-- Przycisk do wypożyczenia gry -->
-            <button type="button" class="button-style2">Wypożycz Grę!</button>
+            {% if user.is_authenticated %}
+                <!-- Formularz do wypożyczenia gry -->
+                <form action="{% url 'game_detail' game.slug %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="rent_game" value="true">
+                    <button type="submit" class="button-style2">Wypożycz Grę!</button>
+                </form>
+            {% endif %}
         {% else %}
             <p style="color: red;">Brak w magazynie</p>
         {% endif %}
-    </div>
-
-    <!-- Dodatkowa sekcja na zawartość koszyka -->
-    <div class="game-column game-order">
-        <h2>Zawartość koszyka</h2>
-        <!-- Treść koszyka -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 </div>
 
