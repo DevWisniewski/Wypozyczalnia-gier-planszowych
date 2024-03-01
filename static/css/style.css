@@ -62,7 +62,7 @@
     margin-bottom: 10px;
 }
 .account {
-    /* Podstawowe stylowanie dla każdej kolumny */
+    /* Podstawowe stylowanie dla danych  */
     padding: 5px;
     box-sizing: border-box;
 }
@@ -77,8 +77,15 @@
 }
 
 .account-buttons {
+    /* Stylowanie przycisków konta użytkownika */
     display: flex;
     justify-content: flex-end; /* Wyrównanie do prawej */
     align-items: center; /* Wyśrodkowanie wertykalne */
     padding-right: 20px; /* Odstęp od prawej krawędzi */
+}
+
+.form-control {
+    /* Stylowanie elementów formularza */
+    display: block;
+    margin-bottom: 5px;
 }

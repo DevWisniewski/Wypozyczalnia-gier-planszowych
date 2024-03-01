@@ -8,27 +8,19 @@
         <p>Email: {{ user.email }}</p>
         <p>Telefon: {{ user.phone_number }}</p>
 
-        <!-- Stylowanie formularza -->
-        <style>
-            input, label {
-                display: block;
-                margin-bottom: 5px;
-            }
-        </style>
-
         <!-- Formularz edycji danych użytkownika -->
         <form action="{% url 'my_account' %}" method="post">
             {% csrf_token %}
             <label for="first_name">Imię:</label>
-            <input type="text" id="first_name" name="first_name">
+            <input type="text" id="first_name" name="first_name" class="form-control">
 
             <label for="last_name">Nazwisko:</label>
-            <input type="text" id="last_name" name="last_name">
+            <input type="text" id="last_name" name="last_name" class="form-control">
 
             <label for="phone_number">Telefon:</label>
-            <input type="text" id="phone_number" name="phone_number">
+            <input type="text" id="phone_number" name="phone_number" class="form-control">
 
-            <input type="submit" value="Aktualizuj dane">
+            <input type="submit" value="Aktualizuj dane" class="form-control">
         </form>
 
         <!-- Formularz adresu -->
@@ -43,26 +35,26 @@
         <form action="{% url 'my_account' %}" method="post">
             {% csrf_token %}
             <label for="street">Ulica:</label>
-            <input type="text" id="street" name="street">
+            <input type="text" id="street" name="street" class="form-control">
 
             <label for="house_number">Numer domu/mieszkania:</label>
-            <input type="text" id="house_number" name="house_number">
+            <input type="text" id="house_number" name="house_number" class="form-control">
 
             <label for="postal_code">Kod pocztowy:</label>
-            <input type="text" id="postal_code" name="postal_code">
+            <input type="text" id="postal_code" name="postal_code" class="form-control">
 
             <label for="city">Miasto:</label>
-            <input type="text" id="city" name="city">
+            <input type="text" id="city" name="city" class="form-control">
 
             <label for="country">Kraj:</label>
-            <input type="text" id="country" name="country">
+            <input type="text" id="country" name="country" class="form-control">
 
-            <input type="submit" value="Aktualizuj adres">
+            <input type="submit" value="Aktualizuj adres" class="form-control">
         </form>
 
         <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
-            <input type="submit" value="Wyloguj">
+            <input type="submit" value="Wyloguj" class="form-control">
         </form>
     </div>
 
