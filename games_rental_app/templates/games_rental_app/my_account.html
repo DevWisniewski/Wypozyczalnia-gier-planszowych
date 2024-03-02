@@ -1,13 +1,78 @@
 {% extends 'games_rental_app/base.html' %}
 
 {% block content %}
-<h1>Profil Użytkownika</h1>
-<p>Imię: {{ user.first_name }}</p>
-<p>Nazwisko: {{ user.last_name }}</p>
-<p>Email: {{ user.email }}</p>
+    <div class="account">
+        <h2>Profil Użytkownika: {{ user.username }}</h2>
+        <!-- Lista wypożyczonych gier -->
+        <h3>Twoje wypożyczenia</h3>
+        {% if rentals %}
+            <ul>
+                {% for rental in rentals %}
+                    <li>
+                        Gra: {{ rental.inventory.game.name }},
+                        Data wypożyczenia: {{ rental.rental_date|date:"d.m.Y" }},
+                        Cena: {{ rental.total_cost }} PLN
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nie masz obecnie wypożyczonych gier.</p>
+        {% endif %}
 
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Wyloguj">
-</form>
+        <h3>Dane osobowe</h3>
+        <p>Imię: {{ user.first_name }}</p>
+        <p>Nazwisko: {{ user.last_name }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Telefon: {{ user.phone_number }}</p>
+
+        {% if user.address %}
+            <h3>Twój adres</h3>
+            <p>{{ user.address.street }} {{ user.address.house_number }}</p>
+            <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
+            <p>{{ user.address.country }}</p>
+        {% else %}
+            <h3>Adres nie został jeszcze dodany</h3>
+        {% endif %}
+        <h3>Edycja danych</h3>
+        <!-- Formularz edycji danych użytkownika -->
+        <form action="{% url 'my_account' %}" method="post">
+            {% csrf_token %}
+            <label for="first_name">Imię:</label>
+            <input type="text" id="first_name" name="first_name" class="form-control">
+
+            <label for="last_name">Nazwisko:</label>
+            <input type="text" id="last_name" name="last_name" class="form-control">
+
+            <label for="phone_number">Telefon:</label>
+            <input type="text" id="phone_number" name="phone_number" class="form-control">
+
+            <input type="submit" value="Aktualizuj dane" class="form-control">
+        </form>
+
+        <!-- Formularz adresu -->
+        <form action="{% url 'my_account' %}" method="post">
+            {% csrf_token %}
+            <label for="street">Ulica:</label>
+            <input type="text" id="street" name="street" class="form-control">
+
+            <label for="house_number">Numer domu/mieszkania:</label>
+            <input type="text" id="house_number" name="house_number" class="form-control">
+
+            <label for="postal_code">Kod pocztowy:</label>
+            <input type="text" id="postal_code" name="postal_code" class="form-control">
+
+            <label for="city">Miasto:</label>
+            <input type="text" id="city" name="city" class="form-control">
+
+            <label for="country">Kraj:</label>
+            <input type="text" id="country" name="country" class="form-control">
+
+            <input type="submit" value="Aktualizuj adres" class="form-control">
+        </form>
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Wyloguj" class="form-control">
+        </form>
+    </div>
 {% endblock %}
