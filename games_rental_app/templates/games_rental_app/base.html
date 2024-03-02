@@ -1,4 +1,5 @@
 {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -12,13 +13,14 @@
         .top-bar {
             background-color: #111; /* Ciemny kolor paska */
             color: lightgray;
+            display: flex; /* Flexbox */
+            justify-content: center; /* Wyśrodkowanie horyzontalnie */
+            align-items: center; /* Wyśrodkowanie wertykalnie */
             padding: 10px 0;
-            text-align: center;
         }
         .top-bar div {
-            margin: 0 auto;
-            display: inline-block;
-            padding: 0 20px;
+            flex: 1; /* Każda kolumna zajmuje równą przestrzeń */
+            text-align: center; /* Wyśrodkowanie tekstu w kolumnie */
         }
         .navigation-bar {
             border: 1px solid black;
@@ -33,23 +35,48 @@
             text-decoration: none;
             font-size: 20px;
         }
+        .account-buttons {
+            text-align: right;
+            padding-right: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- Górny pasek z podstawowymi informacjami -->
     <div class="top-bar">
-        <div><img src="{% static 'phone-icon.png' %}" alt="Telefon"> 732762475</div>
+        <div>632762475</div>
         <div>wypozyczalniagier@gmail.com</div>
         <div>ul. Świętego Mikołaja 7, 25-477 Gorzów Wielkopolski</div>
     </div>
+    <!-- Pasek nawigacyjny -->
     <div class="navigation-bar">
-        <a href="#">Witaj!</a>
-        <a href="#">Wypożycz grę</a>
-        <a href="#">Kontakt</a>
+        <a href="{% url 'welcome' %}">Witaj!</a>
+        <a href="{% url 'game_list' %}">Wypożycz grę</a>
+        <a href="{% url 'contact' %}">Kontakt</a>
+        </div>
+
+    <!-- Jeśli użytkownik jest zalogowany -->
+    <div class="account-buttons">
+    <form action="#" method="get" style="display: flex;">
+        <!-- Jeśli użytkownik jest zalogowany -->
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <button formaction="{% url 'rental_list' %}" type="submit" class="button-style">Zwroty</button>
+            {% endif %}
+            <button formaction="{% url 'my_account' %}" type="submit" class="button-style">Moje konto</button>
+            {% csrf_token %}
+            <button formaction="{% url 'logout' %}" type="submit" class="button-style">Wyloguj</button>
+        <!-- Jeśli użytkownik nie jest zalogowany -->
+        {% else %}
+            <button formaction="{% url 'add_user' %}" type="submit" class="button-style">Utwórz konto</button>
+            <button formaction="{% url 'login' %}" type="submit" class="button-style">Zaloguj</button>
+        {% endif %}
+    </form>
     </div>
 
-    {% block content %} {% endblock %}
 
-    <!-- Tutaj można dodać dodatkową treść, która będzie wspólna dla wszystkich stron -->
+    {% block content %}
+    {% endblock %}
 
 </body>
 </html>
