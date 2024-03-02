@@ -101,3 +101,11 @@ class Rental(models.Model):
     rental_date = models.DateTimeField(default=timezone.now)  # Data wypożyczenia
     return_date = models.DateTimeField(null=True, blank=True)  # Data zwrotu
     total_cost = models.DecimalField(max_digits=6, decimal_places=2)  # Całkowity koszt wypożyczenia
+
+
+class ContactMessage(models.Model):
+    """Zawiera wiadomości przesłane poprzez formularz kontaktowy."""
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

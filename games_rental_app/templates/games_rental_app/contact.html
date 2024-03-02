@@ -3,6 +3,15 @@
 {% block content %}
 <div class="game-container">
     <div class="game-column">
+        <!-- Sekcja do wyświetlania wiadomości -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div>{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- Dane kontaktowe -->
         <h1 class="game-heading">Kontakt</h1>
         <p>Jeśli masz jakiekolwiek pytania lub sugestie, skontaktuj się z nami!</p>
         <div class="contact-info">
@@ -13,7 +22,8 @@
         </div>
         <div class="contact-form">
             <h2>Formularz kontaktowy:</h2>
-            <form action="#" method="post">
+            <form action="{% url 'contact' %}" method="post">
+                {% csrf_token %}
                 <div class="form-group">
                     <label for="name">Imię:</label><br>
                     <input type="text" id="name" name="name" class="form-control"><br>

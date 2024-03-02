@@ -1,15 +1,15 @@
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import CreateView, FormView, ListView, RedirectView, TemplateView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.generic import CreateView, FormView, ListView, RedirectView, TemplateView, View
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from django.contrib import messages
 
 
 from .forms import LoginForm, AddUserForm, GameFilterForm
-from .models import BoardGame, Address, Inventory, Rental, CustomUser
+from .models import BoardGame, Address, Inventory, Rental, ContactMessage
 
 
 
@@ -344,3 +344,28 @@ class RentalListView(UserPassesTestMixin, ListView):
 
         # Odświeżenie widoku listy wypożyczeń
         return super().get(request, *args, **kwargs)
+
+
+class ContactView(View):
+    template_name = 'games_rental_app/contact.html'
+
+    def get(self, request):
+        # Wyświetla pusty formularz kontaktowy
+        return render(request, self.template_name)
+
+    def post(self, request):
+        # Obsługa wysłania formularza
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        # Zapisywanie wiadomości w bazie danych
+        ContactMessage.objects.create(name=name, email=email, message=message)
+
+        # Dodanie wiadomości o sukcesie
+        messages.success(request, 'Wiadomość została wysłana. Skontaktujemy się z Tobą wkrótce.')
+
+        # Przekierowanie na tę samą stronę
+        return redirect('contact')
+
+
