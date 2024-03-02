@@ -17,7 +17,7 @@
         <ul>
             {% for game in games %}
                 <li>
-                    <a href="{% url 'game_detail' slug=game.slug %}">{{ game.name }}</a>
+                    <a href="{% url 'dynamic_game_detail' slug=game.slug %}">{{ game.name }}</a>
                 </li>
             {% empty %}
                 <li>Brak gier w bazie danych.</li>

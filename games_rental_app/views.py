@@ -59,123 +59,11 @@ class AddUserView(CreateView):
     success_url = reverse_lazy("login")
 
 
-class MyAccountView(LoginRequiredMixin, TemplateView):
-    """
-    Widok strony 'Moje konto' dostępny tylko dla zalogowanych użytkowników.
-    Umożliwia wyświetlanie i edycję danych osobowych oraz adresu użytkownika.
-
-    Dziedziczy po:
-    - LoginRequiredMixin: - powoduje, że tylko zalogowani użytkownicy mają dostęp do tego widoku.
-    - TemplateView: - umożliwia korzystanie z generycznego widoku opartego na szablonie.
-    """
-
-    template_name = 'games_rental_app/my_account.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Zwraca kontekst danych dla szablonu, dodaje obiekt zalogowanego użytkownika do kontekstu.
-        """
-        context = super(MyAccountView, self).get_context_data(**kwargs)
-        context['user'] = self.request.user
-        return context
-
-    def post(self, request, *args, **kwargs):
-        """
-        Obsługuje żądania POST z formularza. Umożliwia aktualizację danych osobowych oraz adresu użytkownika.
-        """
-        user = request.user  # Pobranie aktualnie zalogowanego użytkownika
-        user = request.user  # do zmiennej user przypisujemy aktualnie zalogowanego użytkownika
-
-        # Pobieranie z formularza danych osobowych wprowadzonych przez zalogowanego użytkownika
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
-        user.phone_number = request.POST.get('phone_number', user.phone_number)
-        # Zapisanie nowych danych użytkownika
-        user.save()
-
-        # Pobieranie z formularza adresu wprowadzonego przez zalogowanego użytkownika
-        street = request.POST.get('street')
-        house_number = request.POST.get('house_number')
-        postal_code = request.POST.get('postal_code')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-
-        # Sprawdzenie, czy użytkownik podał wszystkie dane w formularzu
-        if street and house_number and postal_code and city and country:
-
-            if user.address:            # Sprawdzenie, czy użytkownik ma już przypisany adres,
-                address = user.address  # Jeśli tak, używany do modyfikacji istniejący obiekt adresu
-            else:
-                address = Address()     # Jeśli nie, tworzony jest nowy obiekt adresu
-
-            # Aktualizacja lub ustawienie nowych danych adresowych
-            address.street = street
-            address.house_number = house_number
-            address.postal_code = postal_code
-            address.city = city
-            address.country = country
-            address.save()
-
-            # Przypisanie nowego obiektu adresu do profilu użytkownika
-            user.address = address
-            user.save()
-
-        return redirect('my_account')
-
-
 class StaticGameDetailsView(TemplateView):
     """
     Widok testowy; pokazuje statyczne informacje o grze.
     """
     template_name = 'games_rental_app/static_game_details.html'
-
-
-class GameDetailsView(DetailView):
-    """
-    Pokazuje szczegółowe informacje o grze na podstawie danych z bazy danych.
-    Używa 'slug' jako identyfikatora do wyszukania gry.
-    """
-    model = BoardGame
-    template_name = 'games_rental_app/dynamic_game_details.html'
-    context_object_name = 'game'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
-
-    def get_context_data(self, **kwargs):
-        context = super(GameDetailsView, self).get_context_data(**kwargs)
-        game = context['game']
-        inventory_items = Inventory.objects.filter(game=game, is_rented=False)
-        context['is_available'] = inventory_items.exists()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        # Twoja dotychczasowa logika
-        self.object = self.get_object()
-
-        # Sprawdzenie, czy przycisk "Wypożycz Grę!" został naciśnięty
-        if 'rent_game' in request.POST:
-            game = self.object
-            available_inventory = Inventory.objects.filter(game=game, is_rented=False).first()
-
-            if available_inventory:
-                Rental.objects.create(
-                    user=request.user,
-                    inventory=available_inventory,
-                    rental_date=timezone.now(),
-                    total_cost=game.rental_price_per_day  # przykładowa kalkulacja kosztu
-                )
-                available_inventory.is_rented = True
-                available_inventory.save()
-                messages.success(request, 'Gra została pomyślnie wypożyczona.')
-            else:
-                messages.error(request, 'Niestety, gra nie jest dostępna.')
-
-            return redirect('game_detail', slug=game.slug)
-
-        # Kontynuuj normalne przetwarzanie, jeśli przycisk "Wypożycz Grę!" nie został naciśnięty
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
-
 
 
 class ContactView(TemplateView):
@@ -248,3 +136,138 @@ class GameListView(ListView):
         context['form'] = GameFilterForm(self.request.GET or None)
 
         return context
+
+
+class GameDetailsView(DetailView):
+    """
+    Pokazuje szczegółowe informacje o grze na podstawie danych z bazy danych.
+    Używa 'slug' jako identyfikatora do wyszukania gry.
+    Umożliwia wypożyczenie gry.
+    """
+    model = BoardGame
+    template_name = 'games_rental_app/dynamic_game_details.html'
+    context_object_name = 'game'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def get_context_data(self, **kwargs):
+        """
+        Rozszerza kontekst szablonu o dodatkowe informacje.
+        Dodaje do kontekstu flagę 'is_available', która wskazuje, czy gra jest dostępna do wypożyczenia.
+        """
+
+        # Pobiera kontekst domyślny dla widoku DetailView, zawierający w sobie obiekt gry.
+        context = super(GameDetailsView, self).get_context_data(**kwargs)
+
+        # Pobiera obiekt gry z kontekstu.
+        game = context['game']
+
+        # Wyszukuje w bazie danych wszystkie egzemplarze tej gry, które nie są wypożyczone.
+        inventory_items = Inventory.objects.filter(game=game, is_rented=False)
+
+        # Dodaje do kontekstu informację, czy gra jest dostępna (istnieje choć jeden egzemplarz niewypożyczony).
+        context['is_available'] = inventory_items.exists()  # zwraca True, jeśli jest jakiś obiekt w queryset
+
+        # Zwraca uzupełniony kontekst zawierający dane o dostępności gry.
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Pobiera aktualny obiekt gry na podstawie 'slug' z URL.
+        self.object = self.get_object()
+
+        # Obsługa żądania POST, gdy użytkownik naciśnie przycisk "Wypożycz Grę!".
+        if 'rent_game' in request.POST:
+            game = self.object
+            # Szukanie pierwszego dostępnego egzemplarza gry, który nie jest wypożyczony.
+            available_inventory = Inventory.objects.filter(game=game, is_rented=False).first()
+
+            # Jeśli dostępny egzemplarz istnieje, tworzy nowy wpis wypożyczenia.
+            if available_inventory:
+                Rental.objects.create(
+                    user=request.user,
+                    inventory=available_inventory,
+                    rental_date=timezone.now(),
+                    total_cost=game.rental_price_per_day
+                )
+                # Oznacza egzemplarz jako wypożyczony i zapisuje zmianę.
+                available_inventory.is_rented = True
+                available_inventory.save()
+                # Wyświetla komunikat o pomyślnym wypożyczeniu.
+                messages.success(request, 'Gra została pomyślnie wypożyczona.')
+            else:
+                # Wyświetla komunikat o błędzie, jeśli gra nie jest dostępna.
+                messages.error(request, 'Niestety, gra nie jest dostępna.')
+
+            # Przekierowuje użytkownika z powrotem na stronę szczegółów gry.
+            return redirect('game_detail', slug=game.slug)
+
+        # Jeśli przycisk "Wypożycz Grę!" nie został naciśnięty, metoda POST zwraca render strony bez zmian w logice
+        context = self.get_context_data(object=self.object)  # pobiera aktualny kontekst zawierający flagę
+        return self.render_to_response(context)  # zwraca odpowiedź HTTP wyrenderowaną w oparciu o nowy kontekst
+
+
+class MyAccountView(LoginRequiredMixin, TemplateView):
+    """
+    Widok strony 'Moje konto' dostępny tylko dla zalogowanych użytkowników.
+    Umożliwia wyświetlanie i edycję danych osobowych oraz adresu użytkownika.
+
+    Dziedziczy po:
+    - LoginRequiredMixin: - powoduje, że tylko zalogowani użytkownicy mają dostęp do tego widoku.
+    - TemplateView: - umożliwia korzystanie z generycznego widoku opartego na szablonie.
+    """
+
+    template_name = 'games_rental_app/my_account.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Zwraca kontekst danych dla szablonu, dodaje obiekt zalogowanego użytkownika do kontekstu.
+        """
+        context = super(MyAccountView, self).get_context_data(**kwargs)
+        user = self.request.user  # Przypisanie obecnie zalogowanego użytkownika do zmiennej 'user'
+        context['user'] = self.request.user
+        # Pobiera wypożyczenia dla zalogowanego użytkownika
+        context['rentals'] = Rental.objects.filter(user=user, return_date__isnull=True)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Obsługuje żądania POST z formularza. Umożliwia aktualizację danych osobowych oraz adresu użytkownika.
+        """
+        user = request.user  # Pobranie aktualnie zalogowanego użytkownika
+        user = request.user  # do zmiennej user przypisujemy aktualnie zalogowanego użytkownika
+
+        # Pobieranie z formularza danych osobowych wprowadzonych przez zalogowanego użytkownika
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.phone_number = request.POST.get('phone_number', user.phone_number)
+        # Zapisanie nowych danych użytkownika
+        user.save()
+
+        # Pobieranie z formularza adresu wprowadzonego przez zalogowanego użytkownika
+        street = request.POST.get('street')
+        house_number = request.POST.get('house_number')
+        postal_code = request.POST.get('postal_code')
+        city = request.POST.get('city')
+        country = request.POST.get('country')
+
+        # Sprawdzenie, czy użytkownik podał wszystkie dane w formularzu
+        if street and house_number and postal_code and city and country:
+
+            if user.address:            # Sprawdzenie, czy użytkownik ma już przypisany adres,
+                address = user.address  # Jeśli tak, używany do modyfikacji istniejący obiekt adresu
+            else:
+                address = Address()     # Jeśli nie, tworzony jest nowy obiekt adresu
+
+            # Aktualizacja lub ustawienie nowych danych adresowych
+            address.street = street
+            address.house_number = house_number
+            address.postal_code = postal_code
+            address.city = city
+            address.country = country
+            address.save()
+
+            # Przypisanie nowego obiektu adresu do profilu użytkownika
+            user.address = address
+            user.save()
+
+        return redirect('my_account')

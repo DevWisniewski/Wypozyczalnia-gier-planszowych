@@ -3,11 +3,37 @@
 {% block content %}
     <div class="account">
         <h2>Profil Użytkownika: {{ user.username }}</h2>
+        <!-- Lista wypożyczonych gier -->
+        <h3>Twoje wypożyczenia</h3>
+        {% if rentals %}
+            <ul>
+                {% for rental in rentals %}
+                    <li>
+                        Gra: {{ rental.inventory.game.name }},
+                        Data wypożyczenia: {{ rental.rental_date|date:"d.m.Y" }},
+                        Cena: {{ rental.total_cost }} PLN
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nie masz obecnie wypożyczonych gier.</p>
+        {% endif %}
+
+        <h3>Dane osobowe</h3>
         <p>Imię: {{ user.first_name }}</p>
         <p>Nazwisko: {{ user.last_name }}</p>
         <p>Email: {{ user.email }}</p>
         <p>Telefon: {{ user.phone_number }}</p>
 
+        {% if user.address %}
+            <h3>Twój adres</h3>
+            <p>{{ user.address.street }} {{ user.address.house_number }}</p>
+            <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
+            <p>{{ user.address.country }}</p>
+        {% else %}
+            <h3>Adres nie został jeszcze dodany</h3>
+        {% endif %}
+        <h3>Edycja danych</h3>
         <!-- Formularz edycji danych użytkownika -->
         <form action="{% url 'my_account' %}" method="post">
             {% csrf_token %}
@@ -24,14 +50,6 @@
         </form>
 
         <!-- Formularz adresu -->
-        {% if user.address %}
-            <h3>Twój adres</h3>
-            <p>{{ user.address.street }} {{ user.address.house_number }}</p>
-            <p>{{ user.address.postal_code }} {{ user.address.city }}</p>
-            <p>{{ user.address.country }}</p>
-        {% else %}
-            <h3>Adres nie został jeszcze dodany</h3>
-        {% endif %}
         <form action="{% url 'my_account' %}" method="post">
             {% csrf_token %}
             <label for="street">Ulica:</label>
@@ -57,5 +75,4 @@
             <input type="submit" value="Wyloguj" class="form-control">
         </form>
     </div>
-
 {% endblock %}
