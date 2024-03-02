@@ -1,0 +1,50 @@
+{% extends 'games_rental_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="game-container">
+    <!-- Sekcja z obrazkiem gry i dodatkowymi informacjami -->
+    <div class="game-column game-image-info">
+        <img src="{% static 'images/'|add:game.image_name %}" alt="{{ game.name }}">
+        <h4>Dodatkowe informacje:</h4>
+        <ul>
+            <li>Liczba graczy: {{ game.number_of_players|join:", " }}</li>
+            <li>Wiek: {{ game.minimum_age }}+</li>
+            <li>Czas trwania: {{ game.min_duration }} minut</li>
+            <li>Cena wynajmu: {{ game.rental_price_per_day }} PLN/dzień</li>
+            <li>Kategoria: {{ game.category|join:", " }}</li>
+        </ul>
+    </div>
+
+        <!-- Sekcja z opisem gry -->
+    <div class="game-column game-description">
+        <h1>{{ game.name }}</h1>
+        <p>{{ game.description }}</p>
+
+        <!-- Informacje o dostępności gry oraz przycisk wypożyczenia (tylko dla zalogowanych użytkowników) -->
+        {% if is_available %}
+            <p style="color: green;">Na stanie</p>
+            {% if user.is_authenticated %}
+                <!-- Formularz do wypożyczenia gry -->
+                <form action="{% url 'dynamic_game_detail' game.slug %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="rent_game" value="true">
+                    <button type="submit" class="button-style2">Wypożycz Grę!</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <p style="color: red;">Brak w magazynie</p>
+        {% endif %}
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
