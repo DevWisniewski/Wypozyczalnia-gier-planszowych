@@ -347,14 +347,19 @@ class RentalListView(UserPassesTestMixin, ListView):
 
 
 class ContactView(View):
+    """
+    Umożliwia wysłanie wiadomości do obsługi serwisu.
+    Zapisuje wiadomość i dane wysyłającego w bazie danych.
+    """
     template_name = 'games_rental_app/contact.html'
 
     def get(self, request):
-        # Wyświetla pusty formularz kontaktowy
+        """Wyświetla pusty formularz kontaktowy"""
         return render(request, self.template_name)
 
     def post(self, request):
-        # Obsługa wysłania formularza
+        """Obsługuje wysłanie formularza"""
+        #
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
