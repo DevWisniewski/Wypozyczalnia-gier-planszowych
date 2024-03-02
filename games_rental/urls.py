@@ -13,5 +13,6 @@ urlpatterns = [
     path('games/', app_views.GameListView.as_view(), name='game_list'),
     path('contact/', app_views.ContactView.as_view(), name='contact'),
     path('welcome/', app_views.WelcomeView.as_view(), name='welcome'),
+    path('rentals/', app_views.RentalListView.as_view(), name='rental_list'),
 
 ]

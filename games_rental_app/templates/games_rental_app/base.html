@@ -60,6 +60,9 @@
     <form action="#" method="get" style="display: flex;">
         <!-- Jeśli użytkownik jest zalogowany -->
         {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <button formaction="{% url 'rental_list' %}" type="submit" class="button-style">Zwroty</button>
+            {% endif %}
             <button formaction="{% url 'my_account' %}" type="submit" class="button-style">Moje konto</button>
             {% csrf_token %}
             <button formaction="{% url 'logout' %}" type="submit" class="button-style">Wyloguj</button>
@@ -72,7 +75,8 @@
     </div>
 
 
-    {% block content %} {% endblock %}
-    <!-- Reszta strony bazowej -->
+    {% block content %}
+    {% endblock %}
+
 </body>
 </html>

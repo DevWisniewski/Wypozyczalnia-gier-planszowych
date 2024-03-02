@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'games_rental_app/base.html' %}
+
+{% block content %}
+    <h2>Lista Wypożyczeń</h2>
+    <!-- Miejsce na wiadomości -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Użytkownik</th>
+                <th>Gra</th>
+                <th>Data Wypożyczenia</th>
+                <th>ID egzemplarza</th>
+                <th>Obliczony koszt wypożyczenia</th>
+                <th>Zwrot</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rental in rentals %}
+            <tr>
+                <td>{{ rental.user }}</td>
+                <td>{{ rental.inventory.game.name }}</td>
+                <td>{{ rental.rental_date|date:"Y-m-d" }}</td>
+                <td>{{ rental.inventory.inventory_id }}</td>
+                <td>{{ rental.total_cost_calculated }} PLN</td>
+                <td>
+                    <!-- Przycisk do zwrotu gry -->
+                    <form action="{% url 'rental_list' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="return_id" value="{{ rental.rental_id }}">
+                        <input type="submit" value="Zwrot">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

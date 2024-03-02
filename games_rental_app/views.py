@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import CreateView, FormView, ListView, RedirectView, TemplateView
@@ -7,8 +7,9 @@ from django.views.generic.detail import DetailView
 from django.utils import timezone
 from django.contrib import messages
 
+
 from .forms import LoginForm, AddUserForm, GameFilterForm
-from .models import BoardGame, Address, Inventory, Rental
+from .models import BoardGame, Address, Inventory, Rental, CustomUser
 
 
 
@@ -172,6 +173,9 @@ class GameDetailsView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
+        """
+        Umożliwia wypożyczenie gry.
+        """
         # Pobiera aktualny obiekt gry na podstawie 'slug' z URL.
         self.object = self.get_object()
 
@@ -199,7 +203,7 @@ class GameDetailsView(DetailView):
                 messages.error(request, 'Niestety, gra nie jest dostępna.')
 
             # Przekierowuje użytkownika z powrotem na stronę szczegółów gry.
-            return redirect('game_detail', slug=game.slug)
+            return redirect('dynamic_game_detail', slug=game.slug)
 
         # Jeśli przycisk "Wypożycz Grę!" nie został naciśnięty, metoda POST zwraca render strony bez zmian w logice
         context = self.get_context_data(object=self.object)  # pobiera aktualny kontekst zawierający flagę
@@ -271,3 +275,72 @@ class MyAccountView(LoginRequiredMixin, TemplateView):
             user.save()
 
         return redirect('my_account')
+
+
+class RentalListView(UserPassesTestMixin, ListView):
+    """
+    Pokazuje listę wypożyczonych egzemplarzy gier planszowych, widok dostępny tylko dla pracowników
+    Umożliwia zwrócenie gry.
+    """
+    model = Rental
+    template_name = 'games_rental_app/admin_rental_list.html'
+    context_object_name = 'rentals'
+
+    def test_func(self):
+        """
+        Metoda sprawdza, czy użytkownik ma prawa dostępu do tej strony
+        """
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        """
+        Zwraca kontekst danych dla szablonu, wyświetla wypożyczone egzemplarze gry i cenę za wypożyczenie.
+        Wyświetla tylko te wypożyczenia, które nie mają jeszcze ustawionej daty zwrotu.
+        """
+        context = super().get_context_data(**kwargs)
+
+        # Filtrowanie wypożyczeń, które nie mają ustawionej daty zwrotu
+        rentals = Rental.objects.filter(return_date__isnull=True)
+
+        for rental in rentals:
+            today = timezone.now().date()
+            rental_days = (today - rental.rental_date.date()).days + 1
+            rental.total_cost_calculated = rental_days * rental.inventory.game.rental_price_per_day
+
+        context['rentals'] = rentals
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Pobieranie identyfikatora wypożyczenia z formularza
+        """
+        rental_id = request.POST.get('return_id')
+
+        if rental_id:
+            # Pobieranie obiektu Rental na podstawie identyfikatora
+            rental = get_object_or_404(Rental, rental_id=rental_id)
+
+            # Sprawdzanie, czy gra nie została już wcześniej zwrócona
+            if not rental.return_date:
+                # Ustawienie daty zwrotu i obliczenie całkowitego kosztu
+                rental.return_date = timezone.now()
+                days_rented = (rental.return_date - rental.rental_date).days + 1
+                rental.total_cost = days_rented * rental.inventory.game.rental_price_per_day
+
+                # Aktualizowanie stanu gry w magazynie
+                inventory_item = rental.inventory
+                inventory_item.is_rented = False
+                inventory_item.save()
+
+                # Zapisanie zmian w wypożyczeniu
+                rental.save()
+
+                messages.success(request, f"Gra '{rental.inventory.game.name}' została pomyślnie zwrócona.")
+            else:
+                messages.error(request, "Ta gra została już zwrócona.")
+
+        else:
+            messages.error(request, "Niepoprawny identyfikator wypożyczenia.")
+
+        # Odświeżenie widoku listy wypożyczeń
+        return super().get(request, *args, **kwargs)
