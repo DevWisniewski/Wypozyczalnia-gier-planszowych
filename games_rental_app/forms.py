@@ -80,8 +80,8 @@ class GameFilterForm(forms.Form):
 
     # Wybór zakresu cenowego dla wypożyczenia gier, z etykietami określającymi ceny za dobę.
     PRICE_CHOICES = [(0, '---')] + [(i, f'{i} zł') for i in [2, 5, 10, 15, 20, 25, 30]]
-    min_price = forms.ChoiceField(choices=PRICE_CHOICES, label='Cena za wypożyczenie od (za dobę)', required=False)
-    max_price = forms.ChoiceField(choices=PRICE_CHOICES, label='do (za dobę)', required=False)
+    min_price = forms.ChoiceField(choices=PRICE_CHOICES, label='od', required=False)
+    max_price = forms.ChoiceField(choices=PRICE_CHOICES, label='do', required=False)
 
 
 class UserEditForm(forms.ModelForm):

@@ -12,8 +12,6 @@ from .forms import LoginForm, AddUserForm, GameFilterForm
 from .models import BoardGame, Address, Inventory, Rental, ContactMessage
 
 
-
-
 User = get_user_model()
 
 
@@ -58,13 +56,6 @@ class AddUserView(CreateView):
     model = User
     form_class = AddUserForm
     success_url = reverse_lazy("login")
-
-
-class StaticGameDetailsView(TemplateView):
-    """
-    Widok testowy; pokazuje statyczne informacje o grze.
-    """
-    template_name = 'games_rental_app/static_game_details.html'
 
 
 class ContactView(TemplateView):
